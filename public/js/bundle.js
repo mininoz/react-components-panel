@@ -1327,6 +1327,9 @@ var currentQueue;
 var queueIndex = -1;
 
 function cleanUpNextTick() {
+    if (!draining || !currentQueue) {
+        return;
+    }
     draining = false;
     if (currentQueue.length) {
         queue = currentQueue.concat(queue);
@@ -19488,7 +19491,88 @@ module.exports = require('./lib/React');
 
 },{"./lib/React":55}],168:[function(require,module,exports){
 var React = require('react');
+var Component = React.Component;
+
+class List extends Component {
+    render() {
+        var divStyle = {};
+        var divStylePanel = {};
+        var divStyleFooter = {
+            background: '#333',
+            color: 'white',
+            borderTop: 'none'
+        };
+
+        this.props.background ? divStyle.background = this.props.background : '';
+        this.props.height ? divStylePanel.height = this.props.height : '';
+
+        return React.createElement(
+            'div',
+            { className: this.props.colClass },
+            React.createElement(
+                'div',
+                { className: 'panel panel-defatul', style: divStyle },
+                React.createElement(
+                    'div',
+                    { className: 'panel-body', style: divStylePanel },
+                    React.createElement(
+                        'h1',
+                        null,
+                        this.props.amount
+                    ),
+                    React.createElement(
+                        'div',
+                        { className: 'text-muted' },
+                        this.props.description
+                    )
+                ),
+                this.props.children ? React.createElement(
+                    'div',
+                    { className: 'panel-footer', style: divStyleFooter },
+                    React.createElement(
+                        'div',
+                        { className: 'row' },
+                        this.props.children
+                    )
+                ) : null
+            )
+        );
+    }
+}
+
+module.exports = List;
+
+},{"react":167}],169:[function(require,module,exports){
+var React = require('react');
+var Component = React.Component;
+
+class PanelFooter extends Component {
+    render() {
+        return React.createElement(
+            "div",
+            { className: "col-md-4 text-center" },
+            React.createElement(
+                "h1",
+                null,
+                this.props.amount
+            ),
+            React.createElement(
+                "div",
+                { className: "text-muted" },
+                this.props.description
+            )
+        );
+    }
+}
+
+module.exports = PanelFooter;
+
+},{"react":167}],170:[function(require,module,exports){
+var React = require('react');
 var ReactDOM = require('react-dom');
+
+var Panel = require('./components/Panel.jsx');
+var PanelFooter = require('./components/PanelFooter.jsx');
 
 var Test = React.createClass({
     displayName: 'Test',
@@ -19496,12 +19580,52 @@ var Test = React.createClass({
     render: function () {
         return React.createElement(
             'div',
-            null,
-            ' Hello React '
+            { className: 'row' },
+            React.createElement(
+                'div',
+                { className: 'col-md-9' },
+                React.createElement(
+                    'div',
+                    { className: 'row' },
+                    React.createElement(Panel, {
+                        amount: '100',
+                        description: 'New Follow',
+                        colClass: 'col-md-4'
+                    }),
+                    React.createElement(Panel, { amount: '$ 1250',
+                        description: 'Average Monthly Income',
+                        colClass: 'col-md-4'
+                    }),
+                    React.createElement(Panel, { amount: '$ 13865',
+                        description: 'Yearly Income Goal',
+                        colClass: 'col-md-4'
+                    }),
+                    React.createElement(
+                        Panel,
+                        { amount: '',
+                            description: '',
+                            colClass: 'col-md-12',
+                            height: '200',
+                            background: '#294F8A' },
+                        React.createElement(PanelFooter, {
+                            amount: '1000',
+                            description: 'Views'
+                        }),
+                        React.createElement(PanelFooter, {
+                            amount: '1000',
+                            description: 'Like'
+                        }),
+                        React.createElement(PanelFooter, {
+                            amount: '1000',
+                            description: 'Comment'
+                        })
+                    )
+                )
+            )
         );
     }
 });
 
 ReactDOM.render(React.createElement(Test, null), document.getElementById('app'));
 
-},{"react":167,"react-dom":29}]},{},[168]);
+},{"./components/Panel.jsx":168,"./components/PanelFooter.jsx":169,"react":167,"react-dom":29}]},{},[170]);

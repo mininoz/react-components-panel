@@ -19550,7 +19550,7 @@ class PanelFooter extends Component {
     render() {
         return React.createElement(
             "div",
-            { className: "col-md-4 text-center" },
+            { className: "col-md-4 col-sm-4 col-xs-4 text-center" },
             React.createElement(
                 "h1",
                 null,
